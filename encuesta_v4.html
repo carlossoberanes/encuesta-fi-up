@@ -524,7 +524,7 @@
 // ============================================================
 // CONFIGURACIÓN — REEMPLAZA CON TU URL REAL
 // ============================================================
-const GS_URL = 'https://script.google.com/macros/s/AKfycbzTe8HcaiYNep-YA9H3dA2VdxJrgWmDPQxisIqsimDBvxTijQ1lOND5buyZMZA8j9HkcQ/exec';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbz7V5kLF9ssk_bbO2gjE1Lm6truJNqJZW34mNY6aTpJHoO07N5A8SdpZc_BFLz_SgvJ0Q/exec';
 const API_KEY = 'FI-UP-2026-ENCUESTA';
 
 const SEMANAS = [
@@ -924,16 +924,20 @@ async function enviar() {
 
   try {
     for (const r of respAcum) {
+      // Enviar como FormData para evitar problemas CORS con no-cors
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(r));
+      formData.append('key', API_KEY);
       await fetch(GS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(r)
+        body: formData
       });
     }
     enviado = true;
   } catch(e) {
     console.warn('Error enviando:', e);
+    enviado = false;
   }
 
   ocultarLoading();
