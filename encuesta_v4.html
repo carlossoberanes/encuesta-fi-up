@@ -285,25 +285,25 @@
       <div class="form-group" id="fg-p1">
         <label class="form-label">P1. ¿El profesor asistió a todas las sesiones de esta semana? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p1','si')"><input type="radio" name="p1" value="si" onchange="manejarP1(this)"><span class="option-label">Sí, asistió a todas las sesiones</span></label>
-          <label class="option-item" onclick="sel(this,'p1','no')"><input type="radio" name="p1" value="no" onchange="manejarP1(this)"><span class="option-label">No, faltó a una o más sesiones</span></label>
+          <label class="option-item" onclick="sel(this,'p1','si')"><input type="radio" name="p1" value="Sí, asistió a todas las sesiones" onchange="manejarP1(this)"><span class="option-label">Sí, asistió a todas las sesiones</span></label>
+          <label class="option-item" onclick="sel(this,'p1','no')"><input type="radio" name="p1" value="No, faltó a una o más sesiones" onchange="manejarP1(this)"><span class="option-label">No, faltó a una o más sesiones</span></label>
         </div>
         <div class="field-error" id="er-p1">Selecciona una opción</div>
         <div class="cond" id="p1a-c">
           <div class="cond-label">↳ P1a. ¿El profesor avisó con anticipación?</div>
           <div class="options-list">
-            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="aviso-suf"><span class="option-label">Sí, avisó con anticipación suficiente</span></label>
-            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="aviso-poco"><span class="option-label">Avisó, pero con muy poco tiempo</span></label>
-            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="no-aviso"><span class="option-label">No avisó</span></label>
+            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="Sí, avisó con anticipación suficiente"><span class="option-label">Sí, avisó con anticipación suficiente</span></label>
+            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="Avisó, pero con muy poco tiempo"><span class="option-label">Avisó, pero con muy poco tiempo</span></label>
+            <label class="option-item" onclick="selC(this,'p1a')"><input type="radio" name="p1a" value="No avisó"><span class="option-label">No avisó</span></label>
           </div>
           <div class="field-error" id="er-p1a">Selecciona una opción</div>
         </div>
         <div class="cond" id="p1b-c">
           <div class="cond-label">↳ P1b. ¿Se reprogramará la sesión no impartida?</div>
           <div class="options-list">
-            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="ya-reprogram"><span class="option-label">Sí, ya se reprogramó</span></label>
-            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="se-repondra"><span class="option-label">El profesor indicó que se repondrá</span></label>
-            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="no-repos"><span class="option-label">No se repondrá / No se mencionó reposición</span></label>
+            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="Sí, ya se reprogramó"><span class="option-label">Sí, ya se reprogramó</span></label>
+            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="El profesor indicó que se repondrá"><span class="option-label">El profesor indicó que se repondrá</span></label>
+            <label class="option-item" onclick="selC(this,'p1b')"><input type="radio" name="p1b" value="No se repondrá / No se mencionó reposición"><span class="option-label">No se repondrá / No se mencionó reposición</span></label>
           </div>
           <div class="field-error" id="er-p1b">Selecciona una opción</div>
         </div>
@@ -313,10 +313,10 @@
         <label class="form-label">P2. ¿Cómo fue la puntualidad al inicio de las sesiones? <span class="req">*</span></label>
         <div class="form-hint">Se considera a tiempo si la sesión comienza en los primeros 5 minutos</div>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p2','puntual')"><input type="radio" name="p2" value="puntual"><span class="option-label">Puntual en todas las sesiones</span></label>
-          <label class="option-item" onclick="sel(this,'p2','r-menor')"><input type="radio" name="p2" value="r-menor"><span class="option-label">Con retraso menor en alguna sesión (5–15 minutos)</span></label>
-          <label class="option-item" onclick="sel(this,'p2','r-mayor')"><input type="radio" name="p2" value="r-mayor"><span class="option-label">Con retraso mayor en alguna sesión (más de 15 minutos)</span></label>
-          <label class="option-item" onclick="sel(this,'p2','r-recur')"><input type="radio" name="p2" value="r-recur"><span class="option-label">Con retrasos recurrentes durante la semana</span></label>
+          <label class="option-item" onclick="sel(this,'p2','puntual')"><input type="radio" name="p2" value="Puntual en todas las sesiones"><span class="option-label">Puntual en todas las sesiones</span></label>
+          <label class="option-item" onclick="sel(this,'p2','r-menor')"><input type="radio" name="p2" value="Con retraso menor en alguna sesión"><span class="option-label">Con retraso menor en alguna sesión (5–15 minutos)</span></label>
+          <label class="option-item" onclick="sel(this,'p2','r-mayor')"><input type="radio" name="p2" value="Con retraso mayor en alguna sesión (más de 15 minutos)"><span class="option-label">Con retraso mayor en alguna sesión (más de 15 minutos)</span></label>
+          <label class="option-item" onclick="sel(this,'p2','r-recur')"><input type="radio" name="p2" value="Con retrasos recurrentes durante la semana"><span class="option-label">Con retrasos recurrentes durante la semana</span></label>
         </div>
         <div class="field-error" id="er-p2">Selecciona una opción</div>
       </div>
@@ -325,10 +325,10 @@
         <label class="form-label">P3. ¿Cómo fue la duración de las sesiones? <span class="req">*</span></label>
         <div class="form-hint">Se considera adecuado terminar en horario o hasta 10 minutos antes</div>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p3','adec')"><input type="radio" name="p3" value="adec"><span class="option-label">Terminó adecuadamente en todas las sesiones</span></label>
-          <label class="option-item" onclick="sel(this,'p3','temp')"><input type="radio" name="p3" value="temp"><span class="option-label">Terminó muy temprano en alguna sesión (más de 10 minutos antes)</span></label>
-          <label class="option-item" onclick="sel(this,'p3','ext-oc')"><input type="radio" name="p3" value="ext-oc"><span class="option-label">Se extendió ocasionalmente (hasta 10 minutos extra)</span></label>
-          <label class="option-item" onclick="sel(this,'p3','ext-ex')"><input type="radio" name="p3" value="ext-ex"><span class="option-label">Se extendió de forma recurrente o excesiva</span></label>
+          <label class="option-item" onclick="sel(this,'p3','adec')"><input type="radio" name="p3" value="Terminó adecuadamente en todas las sesiones"><span class="option-label">Terminó adecuadamente en todas las sesiones</span></label>
+          <label class="option-item" onclick="sel(this,'p3','temp')"><input type="radio" name="p3" value="Terminó muy temprano en alguna sesión (más de 10 minutos antes)"><span class="option-label">Terminó muy temprano en alguna sesión (más de 10 minutos antes)</span></label>
+          <label class="option-item" onclick="sel(this,'p3','ext-oc')"><input type="radio" name="p3" value="Se extendió ocasionalmente (hasta 10 minutos extra)"><span class="option-label">Se extendió ocasionalmente (hasta 10 minutos extra)</span></label>
+          <label class="option-item" onclick="sel(this,'p3','ext-ex')"><input type="radio" name="p3" value="Se extendió de forma recurrente o excesiva"><span class="option-label">Se extendió de forma recurrente o excesiva</span></label>
         </div>
         <div class="field-error" id="er-p3">Selecciona una opción</div>
       </div>
@@ -338,10 +338,10 @@
       <div class="form-group" id="fg-p4">
         <label class="form-label">P4. ¿El profesor cubrió los temas esperados para esta semana? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p4','todos')"><input type="radio" name="p4" value="todos"><span class="option-label">Sí, cubrió todos los temas previstos</span></label>
-          <label class="option-item" onclick="sel(this,'p4','mayor')"><input type="radio" name="p4" value="mayor"><span class="option-label">Cubrió la mayoría, con algunos temas pendientes</span></label>
-          <label class="option-item" onclick="sel(this,'p4','poco')"><input type="radio" name="p4" value="poco"><span class="option-label">Cubrió muy poco del contenido esperado</span></label>
-          <label class="option-item" onclick="sel(this,'p4','nr')"><input type="radio" name="p4" value="nr"><span class="option-label">No tengo referencia del programa para comparar</span></label>
+          <label class="option-item" onclick="sel(this,'p4','todos')"><input type="radio" name="p4" value="Sí, cubrió todos los temas previstos"><span class="option-label">Sí, cubrió todos los temas previstos</span></label>
+          <label class="option-item" onclick="sel(this,'p4','mayor')"><input type="radio" name="p4" value="Cubrió la mayoría, con algunos temas pendientes"><span class="option-label">Cubrió la mayoría, con algunos temas pendientes</span></label>
+          <label class="option-item" onclick="sel(this,'p4','poco')"><input type="radio" name="p4" value="Cubrió muy poco del contenido esperado"><span class="option-label">Cubrió muy poco del contenido esperado</span></label>
+          <label class="option-item" onclick="sel(this,'p4','nr')"><input type="radio" name="p4" value="No tengo referencia del programa para comparar"><span class="option-label">No tengo referencia del programa para comparar</span></label>
         </div>
         <div class="field-error" id="er-p4">Selecciona una opción</div>
       </div>
@@ -377,9 +377,9 @@
       <div class="form-group" id="fg-p7">
         <label class="form-label">P7. Uso de recursos didácticos y tecnológicos <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p7','efect')"><input type="radio" name="p7" value="efect"><span class="option-label">Sí, de manera efectiva y pertinente</span></label>
-          <label class="option-item" onclick="sel(this,'p7','parci')"><input type="radio" name="p7" value="parci"><span class="option-label">Parcialmente, hay áreas de mejora</span></label>
-          <label class="option-item" onclick="sel(this,'p7','inad')"><input type="radio" name="p7" value="inad"><span class="option-label">No, los recursos fueron insuficientes o inadecuados</span></label>
+          <label class="option-item" onclick="sel(this,'p7','efect')"><input type="radio" name="p7" value="Sí, de manera efectiva y pertinente"><span class="option-label">Sí, de manera efectiva y pertinente</span></label>
+          <label class="option-item" onclick="sel(this,'p7','parci')"><input type="radio" name="p7" value="Parcialmente, hay áreas de mejora"><span class="option-label">Parcialmente, hay áreas de mejora</span></label>
+          <label class="option-item" onclick="sel(this,'p7','inad')"><input type="radio" name="p7" value="No, los recursos fueron insuficientes o inadecuados"><span class="option-label">No, los recursos fueron insuficientes o inadecuados</span></label>
         </div>
         <div class="field-error" id="er-p7">Selecciona una opción</div>
       </div>
@@ -389,11 +389,11 @@
       <div class="form-group" id="fg-p8">
         <label class="form-label">P8. ¿El profesor ha calificado y dado retroalimentación sobre las tareas o trabajos entregados recientemente? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p8','oportuna')"><input type="radio" name="p8" value="oportuna"><span class="option-label">Sí, ha calificado y dado retroalimentación oportuna</span></label>
-          <label class="option-item" onclick="sel(this,'p8','sin-retro')"><input type="radio" name="p8" value="sin-retro"><span class="option-label">Ha calificado pero sin retroalimentación o comentarios</span></label>
-          <label class="option-item" onclick="sel(this,'p8','no-calif')"><input type="radio" name="p8" value="no-calif"><span class="option-label">Aún no ha calificado tareas entregadas hace más de una semana</span></label>
-          <label class="option-item" onclick="sel(this,'p8','sin-tareas')"><input type="radio" name="p8" value="sin-tareas"><span class="option-label">No hemos entregado tareas todavía en este ciclo</span></label>
-          <label class="option-item" onclick="sel(this,'p8','no-aplica')"><input type="radio" name="p8" value="no-aplica"><span class="option-label">No aplica (esta materia no tiene tareas formales)</span></label>
+          <label class="option-item" onclick="sel(this,'p8','oportuna')"><input type="radio" name="p8" value="Sí, ha calificado y dado retroalimentación oportuna"><span class="option-label">Sí, ha calificado y dado retroalimentación oportuna</span></label>
+          <label class="option-item" onclick="sel(this,'p8','sin-retro')"><input type="radio" name="p8" value="Ha calificado pero sin retroalimentación o comentarios"><span class="option-label">Ha calificado pero sin retroalimentación o comentarios</span></label>
+          <label class="option-item" onclick="sel(this,'p8','no-calif')"><input type="radio" name="p8" value="Aún no ha calificado tareas entregadas hace más de una semana"><span class="option-label">Aún no ha calificado tareas entregadas hace más de una semana</span></label>
+          <label class="option-item" onclick="sel(this,'p8','sin-tareas')"><input type="radio" name="p8" value="No hemos entregado tareas todavía en este ciclo"><span class="option-label">No hemos entregado tareas todavía en este ciclo</span></label>
+          <label class="option-item" onclick="sel(this,'p8','no-aplica')"><input type="radio" name="p8" value="No aplica, esta materia no tiene tareas formales"><span class="option-label">No aplica (esta materia no tiene tareas formales)</span></label>
         </div>
         <div class="field-error" id="er-p8">Selecciona una opción</div>
       </div>
@@ -403,9 +403,9 @@
       <div class="form-group" id="fg-p9">
         <label class="form-label">P9. ¿Las sesiones se impartieron en el idioma programado? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p9','completo')"><input type="radio" name="p9" value="completo"><span class="option-label">Sí, completamente en el idioma programado</span></label>
-          <label class="option-item" onclick="sel(this,'p9','parcial')"><input type="radio" name="p9" value="parcial"><span class="option-label">Parcialmente en el idioma programado</span></label>
-          <label class="option-item" onclick="sel(this,'p9','dif')"><input type="radio" name="p9" value="dif"><span class="option-label">No, se impartió en un idioma diferente al programado</span></label>
+          <label class="option-item" onclick="sel(this,'p9','completo')"><input type="radio" name="p9" value="Sí, completamente en el idioma programado"><span class="option-label">Sí, completamente en el idioma programado</span></label>
+          <label class="option-item" onclick="sel(this,'p9','parcial')"><input type="radio" name="p9" value="Parcialmente en el idioma programado"><span class="option-label">Parcialmente en el idioma programado</span></label>
+          <label class="option-item" onclick="sel(this,'p9','dif')"><input type="radio" name="p9" value="No, se impartió en un idioma diferente al programado"><span class="option-label">No, se impartió en un idioma diferente al programado</span></label>
         </div>
         <div class="field-error" id="er-p9">Selecciona una opción</div>
       </div>
@@ -413,10 +413,10 @@
       <div class="form-group" id="fg-p10">
         <label class="form-label">P10. ¿Las sesiones se impartieron en la modalidad programada? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p10','todas')"><input type="radio" name="p10" value="todas"><span class="option-label">Sí, todas en la modalidad programada</span></label>
-          <label class="option-item" onclick="sel(this,'p10','cambio-av')"><input type="radio" name="p10" value="cambio-av"><span class="option-label">Alguna sesión cambió de modalidad con aviso previo</span></label>
-          <label class="option-item" onclick="sel(this,'p10','cambio-sin')"><input type="radio" name="p10" value="cambio-sin"><span class="option-label">Alguna sesión cambió de modalidad sin aviso</span></label>
-          <label class="option-item" onclick="sel(this,'p10','todas-dif')"><input type="radio" name="p10" value="todas-dif"><span class="option-label">Todas las sesiones fueron en modalidad diferente a la programada</span></label>
+          <label class="option-item" onclick="sel(this,'p10','todas')"><input type="radio" name="p10" value="Sí, todas en la modalidad programada"><span class="option-label">Sí, todas en la modalidad programada</span></label>
+          <label class="option-item" onclick="sel(this,'p10','cambio-av')"><input type="radio" name="p10" value="Alguna sesión cambió de modalidad con aviso previo"><span class="option-label">Alguna sesión cambió de modalidad con aviso previo</span></label>
+          <label class="option-item" onclick="sel(this,'p10','cambio-sin')"><input type="radio" name="p10" value="Alguna sesión cambió de modalidad sin aviso"><span class="option-label">Alguna sesión cambió de modalidad sin aviso</span></label>
+          <label class="option-item" onclick="sel(this,'p10','todas-dif')"><input type="radio" name="p10" value="Todas las sesiones fueron en modalidad diferente a la programada"><span class="option-label">Todas las sesiones fueron en modalidad diferente a la programada</span></label>
         </div>
         <div class="field-error" id="er-p10">Selecciona una opción</div>
       </div>
@@ -427,11 +427,11 @@
         <label class="form-label">P11. ¿Cuántas horas dedicaste al trabajo autónomo de esta materia esta semana? <span class="req">*</span></label>
         <div class="form-hint">Incluye tareas, proyectos, lecturas, estudio y actividades fuera de clase</div>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p11','0')"><input type="radio" name="p11" value="0"><span class="option-label">No dediqué tiempo fuera de clase</span></label>
-          <label class="option-item" onclick="sel(this,'p11','<2')"><input type="radio" name="p11" value="<2"><span class="option-label">Menos de 2 horas</span></label>
-          <label class="option-item" onclick="sel(this,'p11','2-4')"><input type="radio" name="p11" value="2-4"><span class="option-label">Entre 2 y 4 horas</span></label>
-          <label class="option-item" onclick="sel(this,'p11','4-6')"><input type="radio" name="p11" value="4-6"><span class="option-label">Entre 4 y 6 horas</span></label>
-          <label class="option-item" onclick="sel(this,'p11','>6')"><input type="radio" name="p11" value=">6"><span class="option-label">Más de 6 horas</span></label>
+          <label class="option-item" onclick="sel(this,'p11','0')"><input type="radio" name="p11" value="No dediqué tiempo fuera de clase"><span class="option-label">No dediqué tiempo fuera de clase</span></label>
+          <label class="option-item" onclick="sel(this,'p11','<2')"><input type="radio" name="p11" value="Menos de 2 horas"><span class="option-label">Menos de 2 horas</span></label>
+          <label class="option-item" onclick="sel(this,'p11','2-4')"><input type="radio" name="p11" value="Entre 2 y 4 horas"><span class="option-label">Entre 2 y 4 horas</span></label>
+          <label class="option-item" onclick="sel(this,'p11','4-6')"><input type="radio" name="p11" value="Entre 4 y 6 horas"><span class="option-label">Entre 4 y 6 horas</span></label>
+          <label class="option-item" onclick="sel(this,'p11','>6')"><input type="radio" name="p11" value="Más de 6 horas"><span class="option-label">Más de 6 horas</span></label>
         </div>
         <div class="field-error" id="er-p11">Selecciona una opción</div>
       </div>
@@ -439,10 +439,10 @@
       <div class="form-group" id="fg-p12">
         <label class="form-label">P12. ¿Consideras esa dedicación proporcional a lo que se espera de la materia? <span class="req">*</span></label>
         <div class="options-list">
-          <label class="option-item" onclick="sel(this,'p12','adec')"><input type="radio" name="p12" value="adec"><span class="option-label">Sí, es adecuada para esta semana</span></label>
-          <label class="option-item" onclick="sel(this,'p12','poca')"><input type="radio" name="p12" value="poca"><span class="option-label">Es poca, esperaba más actividades o retos</span></label>
-          <label class="option-item" onclick="sel(this,'p12','elev-r')"><input type="radio" name="p12" value="elev-r"><span class="option-label">Es un poco elevada, pero razonable</span></label>
-          <label class="option-item" onclick="sel(this,'p12','exces')"><input type="radio" name="p12" value="exces"><span class="option-label">Es excesiva y desproporcionada al tiempo disponible</span></label>
+          <label class="option-item" onclick="sel(this,'p12','adec')"><input type="radio" name="p12" value="Sí, es adecuada para esta semana"><span class="option-label">Sí, es adecuada para esta semana</span></label>
+          <label class="option-item" onclick="sel(this,'p12','poca')"><input type="radio" name="p12" value="Es poca, esperaba más actividades o retos"><span class="option-label">Es poca, esperaba más actividades o retos</span></label>
+          <label class="option-item" onclick="sel(this,'p12','elev-r')"><input type="radio" name="p12" value="Es un poco elevada, pero razonable"><span class="option-label">Es un poco elevada, pero razonable</span></label>
+          <label class="option-item" onclick="sel(this,'p12','exces')"><input type="radio" name="p12" value="Es excesiva y desproporcionada al tiempo disponible"><span class="option-label">Es excesiva y desproporcionada al tiempo disponible</span></label>
         </div>
         <div class="field-error" id="er-p12">Selecciona una opción</div>
       </div>
@@ -469,11 +469,11 @@
         <label class="form-label">P14. ¿Notaste algún problema en el aula durante las sesiones? <span class="req">*</span></label>
         <div class="form-hint">Si no hubo problemas, selecciona únicamente la primera opción</div>
         <div class="options-list">
-          <label class="option-item" onclick="selCheck(this,'p14','ok')"><input type="checkbox" name="p14" value="ok"><span class="option-label">Sin problemas</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','limp')"><input type="checkbox" name="p14" value="limp"><span class="option-label">Falta de limpieza o desorden en el salón</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','mat')"><input type="checkbox" name="p14" value="mat"><span class="option-label">Falta de materiales (gises, borradores)</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','equip')"><input type="checkbox" name="p14" value="equip"><span class="option-label">Falla de equipamiento (proyector, computadora, aire acondicionado, enchufes)</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','salon')"><input type="checkbox" name="p14" value="salon"><span class="option-label">Salón no disponible a tiempo</span></label>
+          <label class="option-item" onclick="selCheck(this,'p14','ok')"><input type="checkbox" name="p14" value="Sin problemas"><span class="option-label">Sin problemas</span></label>
+          <label class="option-item" onclick="selCheck(this,'p14','limp')"><input type="checkbox" name="p14" value="Falta de limpieza o desorden en el salón"><span class="option-label">Falta de limpieza o desorden en el salón</span></label>
+          <label class="option-item" onclick="selCheck(this,'p14','mat')"><input type="checkbox" name="p14" value="Falta de materiales como gises y borradores"><span class="option-label">Falta de materiales (gises, borradores)</span></label>
+          <label class="option-item" onclick="selCheck(this,'p14','equip')"><input type="checkbox" name="p14" value="Falla de equipamiento como proyector, computadora, aire acondicionado y/o enchufes"><span class="option-label">Falla de equipamiento (proyector, computadora, aire acondicionado, enchufes)</span></label>
+          <label class="option-item" onclick="selCheck(this,'p14','salon')"><input type="checkbox" name="p14" value="Salón no disponible a tiempo"><span class="option-label">Salón no disponible a tiempo</span></label>
         </div>
         <div class="field-error" id="er-p14">Selecciona al menos una opción</div>
       </div>
