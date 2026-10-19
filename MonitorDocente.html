@@ -28,15 +28,7 @@
     --risk-l:    #FAE0E0;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg:        #15100A; --surface: #1E1710; --surface-2: #261E14;
-      --border:    #3D3020; --fg: #F0E8D8; --fg-2: #C4AC88; --fg-3: #7A6548;
-      --up-gold:   #D4A835; --gold-d: #B88820; --gold-l: #2A2010; --gold-m: #3A2E18;
-      --ok: #1FA85A; --ok-l: #082B18; --warn: #D4921A; --warn-l: #3A2200; --risk: #E54040; --risk-l: #3D0808;
-      color-scheme: dark;
-    }
-  }
+  /* Tema oscuro disponible solo si el usuario lo activa explícitamente */
   :root[data-theme="dark"] {
     --bg:#15100A;--surface:#1E1710;--surface-2:#261E14;--border:#3D3020;--fg:#F0E8D8;--fg-2:#C4AC88;--fg-3:#7A6548;
     --up-gold:#D4A835;--gold-d:#B88820;--gold-l:#2A2010;--gold-m:#3A2E18;
@@ -337,11 +329,6 @@
     <label>Academia:</label>
     <select id="filterAcademia" onchange="onAcademiaChange(this.value)">
       <option value="all">Toda la Facultad</option>
-      <option value="sc">Sistemas Computacionales</option>
-      <option value="mat">Matemáticas</option>
-      <option value="cb">Ciencias Básicas</option>
-      <option value="ind">Industrial</option>
-      <option value="dis">Diseño e Innovación</option>
     </select>
     <div class="filter-divider"></div>
     <span class="small" id="academiaDesc">Mostrando todos los profesores de la Facultad</span>
@@ -417,11 +404,6 @@
     <label>Programa académico:</label>
     <select id="filterPrograma" onchange="onProgramaChange(this.value)">
       <option value="all">Todos los programas</option>
-      <option value="ici">Ingeniería Civil (ICI)</option>
-      <option value="iis">Ingeniería en Sistemas (IIS)</option>
-      <option value="liibd">LIIBD</option>
-      <option value="iin">Ing. Industrial (IIN)</option>
-      <option value="ime">Ing. Mecatrónica (IME)</option>
     </select>
     <div class="filter-divider"></div>
     <span class="small" id="programaDesc">Mostrando todos los programas</span>
@@ -535,12 +517,6 @@
           <label>Academia</label>
           <select id="fichaAcad" onchange="fichaFilter()">
             <option value="all">Todas</option>
-            <option value="sc">Sistemas Computacionales</option>
-            <option value="mat">Matemáticas</option>
-            <option value="cb">Ciencias Básicas</option>
-            <option value="ind">Industrial</option>
-            <option value="dis">Diseño e Innovación</option>
-            <option value="iin">IIN</option>
           </select>
         </div>
         <div>
@@ -961,6 +937,51 @@ function applyPayload(data) {
   if (data.PROG_DIMS)      PROG_DIMS      = data.PROG_DIMS;
   if (data.ACAD_COUNTS)    ACAD_COUNTS    = data.ACAD_COUNTS;
   if (data.PROG_TABLE)     PROG_TABLE     = data.PROG_TABLE;
+  // Labels dinámicos de academia y programa
+  if (data.ACAD_LABELS)    ACAD_LABELS    = data.ACAD_LABELS;
+  if (data.PROG_LABELS)    PROG_LABELS    = data.PROG_LABELS;
+  // Repoblar los selectores con los valores reales del endpoint
+  syncFilters();
+}
+
+/**
+ * Repobla dinámicamente los tres selectores (academia y programa)
+ * con los labels que llegaron del endpoint (ACAD_LABELS, PROG_LABELS).
+ * Preserva la selección actual si la clave sigue existiendo.
+ */
+function syncFilters() {
+  // ── Selector de academia (vista operativa) ──
+  const selAcad = document.getElementById('filterAcademia');
+  if (selAcad) {
+    const prevAcad = selAcad.value;
+    selAcad.innerHTML = Object.entries(ACAD_LABELS)
+      .map(([k, v]) => `<option value="${k}">${v}</option>`)
+      .join('');
+    selAcad.value = (ACAD_LABELS[prevAcad] !== undefined) ? prevAcad : 'all';
+  }
+
+  // ── Selector de academia (ficha del profesor) ──
+  const selFichaAcad = document.getElementById('fichaAcad');
+  if (selFichaAcad) {
+    const prevFichaAcad = selFichaAcad.value;
+    selFichaAcad.innerHTML = Object.entries(ACAD_LABELS)
+      .map(([k, v]) => {
+        const lbl = k === 'all' ? 'Todas' : v;
+        return `<option value="${k}">${lbl}</option>`;
+      })
+      .join('');
+    selFichaAcad.value = (ACAD_LABELS[prevFichaAcad] !== undefined) ? prevFichaAcad : 'all';
+  }
+
+  // ── Selector de programa (vista táctica) ──
+  const selProg = document.getElementById('filterPrograma');
+  if (selProg) {
+    const prevProg = selProg.value;
+    selProg.innerHTML = Object.entries(PROG_LABELS)
+      .map(([k, v]) => `<option value="${k}">${v}</option>`)
+      .join('');
+    selProg.value = (PROG_LABELS[prevProg] !== undefined) ? prevProg : 'all';
+  }
 }
 
 /**
@@ -1099,7 +1120,8 @@ function onWeekChange(w) {
 }
 
 // ══ VISTA OPERATIVA ── KPIs internos ════════════════════════════
-const ACAD_LABELS = {all:'Toda la Facultad',sc:'Sistemas Computacionales',mat:'Matemáticas',cb:'Ciencias Básicas',ind:'Industrial',dis:'Diseño e Innovación',iin:'IIN'};
+// Inicializados como fallback; se sobreescriben con datos reales de applyPayload()
+let ACAD_LABELS = {all:'Toda la Facultad'};
 
 function _updateOpsKPIs(acad, week) {
   const idx = weekIndex(week);
@@ -1201,25 +1223,41 @@ function renderCoverageTable(acad) {
 }
 
 // ══ VISTA TÁCTICA ── KPIs internos ══════════════════════════════
-const PROG_LABELS = {all:'Todos los programas',ici:'ICI',iis:'IIS',liibd:'LIIBD',iin:'IIN',ime:'IME'};
+// Inicializados como fallback; se sobreescriben con datos reales de applyPayload()
+let PROG_LABELS = {all:'Todos los programas'};
 
 function _updateTacKPIs(prog, week) {
   const idx = weekIndex(week);
-  const vals = PROGRAMAS[prog] || PROGRAMAS.all;
-  const wData = SEMANAS[week];
-  const ica = (idx >= 0 && vals[idx] != null) ? vals[idx] : vals.slice(-1)[0];
+  // PROGRAMAS[prog] es un objeto {label, ica:[], asist:[], profs, trend}
+  // Para 'all' usamos la serie de ICA global de SEMANAS
+  let icaArr, asistArr;
+  if (prog === 'all' || !PROGRAMAS[prog]) {
+    // Usar datos globales de SEMANAS para 'all'
+    icaArr   = Object.values(SEMANAS).map(s => s.ica   ?? null);
+    asistArr = Object.values(SEMANAS).map(s => s.asist ?? null);
+  } else {
+    const progData = PROGRAMAS[prog];
+    icaArr   = progData.ica   || [];
+    asistArr = progData.asist || [];
+  }
 
-  document.getElementById('tacICA').textContent = ica.toFixed(1);
-  document.getElementById('tacICA').className = 'kpi-val ' + icaClass(ica);
-  document.getElementById('tacICALbl').textContent = prog==='all'?'todos los programas':PROG_LABELS[prog];
+  const wData  = SEMANAS[week];
+  const ica    = (idx >= 0 && icaArr[idx] != null)   ? icaArr[idx]   : (icaArr.slice(-1)[0]   ?? null);
+  const asistV = (idx >= 0 && asistArr[idx] != null) ? asistArr[idx] : (asistArr.slice(-1)[0] ?? (wData ? wData.asist : null));
+  const cumpV  = wData ? wData.cump : null;
 
-  // Asistencia/cumplimiento táctica (usa datos de facultad completa si no hay por programa)
-  const asistVal = wData ? wData.asist : 94;
-  const cumpVal  = wData ? wData.cump  : 81;
+  const elICA  = document.getElementById('tacICA');
+  const elLbl  = document.getElementById('tacICALbl');
+  if (elICA) {
+    elICA.textContent = ica != null ? ica.toFixed(1) : '—';
+    elICA.className   = 'kpi-val ' + (ica != null ? icaClass(ica) : '');
+  }
+  if (elLbl) elLbl.textContent = prog==='all' ? 'todos los programas' : (PROG_LABELS[prog] || prog);
+
   const elTA = document.getElementById('tacAsist');
   const elTC = document.getElementById('tacCump');
-  if(elTA) { elTA.textContent = asistVal+'%'; elTA.className='kpi-val '+(asistVal>=90?'c-ok':asistVal>=80?'c-warn':'c-risk'); }
-  if(elTC) { elTC.textContent = cumpVal+'%';  elTC.className='kpi-val '+(cumpVal>=85?'c-ok':cumpVal>=75?'c-warn':'c-risk'); }
+  if(elTA && asistV != null) { elTA.textContent = asistV+'%'; elTA.className='kpi-val '+(asistV>=90?'c-ok':asistV>=80?'c-warn':'c-risk'); }
+  if(elTC && cumpV  != null) { elTC.textContent = cumpV+'%';  elTC.className='kpi-val '+(cumpV>=85?'c-ok':cumpV>=75?'c-warn':'c-risk'); }
 }
 
 // ══ VISTA TÁCTICA ── filtro programa ════════════════════════════
@@ -1232,7 +1270,13 @@ function onProgramaChange(v) {
 }
 
 function renderTrend(progKey) {
-  const vals = PROGRAMAS[progKey]||PROGRAMAS.all;
+  // PROGRAMAS[progKey] es {label, ica:[], ...}; extraer array ica
+  let vals;
+  if (progKey === 'all' || !PROGRAMAS[progKey]) {
+    vals = Object.values(SEMANAS).map(s => s.ica ?? 0);
+  } else {
+    vals = PROGRAMAS[progKey].ica || Object.values(SEMANAS).map(s => s.ica ?? 0);
+  }
   const keys  = Object.keys(SEMANAS);
   const progLabel = PROG_LABELS[progKey]||'Todos los programas';
   document.getElementById('trendTitle').textContent = `Tendencia ICA — ${progLabel}`;
@@ -1484,6 +1528,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   currentWeek = semanasKeys[semanasKeys.length - 1] || 'S8';
 
   // Render inicial de todas las vistas
+  syncFilters();       // Poblar selects con academias/programas reales (o fallback)
   syncWeekSelector();
   const sel = document.getElementById('globalWeek');
   if (sel) sel.value = currentWeek;
