@@ -469,11 +469,11 @@
         <label class="form-label">P14. ¿Notaste algún problema en el aula durante las sesiones? <span class="req">*</span></label>
         <div class="form-hint">Si no hubo problemas, selecciona únicamente la primera opción</div>
         <div class="options-list">
-          <label class="option-item" onclick="selCheck(this,'p14','ok')"><input type="checkbox" name="p14" value="Sin problemas"><span class="option-label">Sin problemas</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','limp')"><input type="checkbox" name="p14" value="Falta de limpieza o desorden en el salón"><span class="option-label">Falta de limpieza o desorden en el salón</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','mat')"><input type="checkbox" name="p14" value="Falta de materiales como gises y borradores"><span class="option-label">Falta de materiales (gises, borradores)</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','equip')"><input type="checkbox" name="p14" value="Falla de equipamiento como proyector, computadora, aire acondicionado y/o enchufes"><span class="option-label">Falla de equipamiento (proyector, computadora, aire acondicionado, enchufes)</span></label>
-          <label class="option-item" onclick="selCheck(this,'p14','salon')"><input type="checkbox" name="p14" value="Salón no disponible a tiempo"><span class="option-label">Salón no disponible a tiempo</span></label>
+          <label class="option-item"><input type="checkbox" name="p14" value="Sin problemas"><span class="option-label">Sin problemas</span></label>
+          <label class="option-item"><input type="checkbox" name="p14" value="Falta de limpieza o desorden en el salón"><span class="option-label">Falta de limpieza o desorden en el salón</span></label>
+          <label class="option-item"><input type="checkbox" name="p14" value="Falta de materiales como gises y borradores"><span class="option-label">Falta de materiales (gises, borradores)</span></label>
+          <label class="option-item"><input type="checkbox" name="p14" value="Falla de equipamiento como proyector, computadora, aire acondicionado y/o enchufes"><span class="option-label">Falla de equipamiento (proyector, computadora, aire acondicionado, enchufes)</span></label>
+          <label class="option-item"><input type="checkbox" name="p14" value="Salón no disponible a tiempo"><span class="option-label">Salón no disponible a tiempo</span></label>
         </div>
         <div class="field-error" id="er-p14">Selecciona al menos una opción</div>
       </div>
@@ -489,8 +489,13 @@
         <span>✗</span><span>Hay preguntas sin responder. Revisa los campos marcados en rojo.</span>
       </div>
 
+      <div id="err-envio" class="alert alert-err" style="display:none;">
+        <span>✗</span><span>No se pudo enviar la evaluación. Verifica tu conexión e intenta de nuevo.
+        Si el problema continúa, <a href="#" onclick="descargar([respPend]); return false;" style="color:inherit;font-weight:700;">descarga esta respuesta (JSON)</a> y entrégala a la Secretaría.</span>
+      </div>
+
       <div class="btn-row">
-        <button class="btn btn-sec" onclick="ir('p2',20)">← Atrás</button>
+        <button class="btn btn-sec" onclick="irSeleccionMaterias()">← Atrás</button>
         <button class="btn btn-prim" id="btnSig" onclick="guardarYSig()">Guardar y continuar →</button>
       </div>
     </div>
@@ -543,6 +548,9 @@ const SEMANAS = [
 // ============================================================
 let alumno=null, semana=null, semInfo=null;
 let mats=[], matYaResp=new Set(), idx=0, respAcum=[];
+let respPend=null, enviando=false, busqSeq=0;
+// Una materia queda "evaluada" por alumno + semana + curso (no por curso solamente)
+const keyMat = m => `${alumno.idAlumno}|${semana}|${m.idCurso}`;
 let LK={p5:null,p6:null,p13:null};
 
 // ============================================================
@@ -555,21 +563,37 @@ document.addEventListener('DOMContentLoaded', () => {
   let timer = null;
   document.getElementById('inputId').addEventListener('input', function() {
     clearTimeout(timer);
+    // Cualquier cambio del ID invalida al alumno actual y cancela consultas en curso
+    resetAlumno();
+    ocultarLoading();
     const val = this.value.trim();
     if (val.length >= 4) {
       timer = setTimeout(() => buscarAlumno(val), 600);
-    } else {
-      resetAlumno();
     }
   });
+
+  // P14 (checkboxes con exclusión de "Sin problemas")
+  document.addEventListener('change', manejarP14);
 });
+
+function parseFecha(str) {
+  const [d, m, a] = str.split('/').map(Number);
+  return new Date(a, m - 1, d);
+}
+// Una semana es futura si su lunes aún no llega (la semana en curso sí se puede evaluar)
+function semanaFutura(w) {
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  return parseFecha(w.ini) > hoy;
+}
 
 function poblarSemanas() {
   const s = document.getElementById('selectSemana');
   SEMANAS.forEach(w => {
     const o = document.createElement('option');
     o.value = w.num;
-    o.textContent = `Semana ${w.num}  ·  ${w.ini} – ${w.fin}`;
+    const futura = semanaFutura(w);
+    o.textContent = `Semana ${w.num}  ·  ${w.ini} – ${w.fin}` + (futura ? '  (aún no disponible)' : '');
+    o.disabled = futura;
     s.appendChild(o);
   });
 }
@@ -581,12 +605,14 @@ async function buscarAlumno(valor) {
   const id = valor.replace(/^0+/, '').trim();
   if (!id || id.length < 4) { resetAlumno(); return; }
 
+  const mi = ++busqSeq;
   mostrarLoading('Buscando alumno...');
 
   try {
     const url = `${GS_URL}?accion=getAlumno&id=${encodeURIComponent(id)}&key=${API_KEY}`;
     const resp = await fetch(url);
     const data = await resp.json();
+    if (mi !== busqSeq) return;   // respuesta obsoleta: el ID cambió mientras se consultaba
 
     ocultarLoading();
 
@@ -610,6 +636,7 @@ async function buscarAlumno(valor) {
       document.getElementById('idSt').style.color = 'var(--rojo)';
     }
   } catch(e) {
+    if (mi !== busqSeq) return;
     ocultarLoading();
     document.getElementById('alumnoErrorMsg').textContent =
       'No se pudo conectar con el servidor. Verifica tu conexión.';
@@ -621,6 +648,7 @@ async function buscarAlumno(valor) {
 }
 
 function resetAlumno() {
+  busqSeq++;            // invalida cualquier consulta en vuelo
   alumno = null;
   document.getElementById('alumnoInfo').style.display = 'none';
   document.getElementById('alumnoError').style.display = 'none';
@@ -631,7 +659,7 @@ function resetAlumno() {
 function manejarSemana(s) {
   const n = parseInt(s.value);
   const h = document.getElementById('semanaHint');
-  const w = SEMANAS.find(x => x.num === n);
+  const w = SEMANAS.find(x => x.num === n && !semanaFutura(x));
   if (w) { semana=n; semInfo=w; h.textContent=`📅 ${w.ini} – ${w.fin}`; h.classList.add('visible'); }
   else   { semana=null; semInfo=null; h.classList.remove('visible'); }
   updBtn();
@@ -649,11 +677,15 @@ function irSeleccionMaterias() {
   document.getElementById('p2sub').textContent =
     `Semana ${semana}  ·  ${semInfo.ini} – ${semInfo.fin}  ·  ${alumno.nombre}`;
 
-  const ya = matYaResp.size;
+  // Al (re)entrar a esta pantalla no debe sobrevivir una selección previa
+  mats = [];
+  document.getElementById('btnIE').disabled = true;
+
+  const ya = alumno.materias.filter(m => matYaResp.has(keyMat(m))).length;
   const av = document.getElementById('avisoSesion');
   if (ya > 0) {
     document.getElementById('avisoTxt').textContent =
-      `Ya evaluaste ${ya} materia${ya>1?'s':''} en esta sesión.`;
+      `Ya evaluaste ${ya} materia${ya>1?'s':''} de esta semana.`;
     av.style.display = 'flex';
   } else { av.style.display = 'none'; }
 
@@ -661,7 +693,7 @@ function irSeleccionMaterias() {
   lista.innerHTML = '';
 
   alumno.materias.forEach((m, i) => {
-    const yaE = matYaResp.has(m.idCurso);
+    const yaE = matYaResp.has(keyMat(m));
     const badge = m.idioma === 'INGLÉS'
       ? '<span class="materia-badge badge-en">🇺🇸 Inglés</span>'
       : '<span class="materia-badge badge-es">🇲🇽 Español</span>';
@@ -718,11 +750,15 @@ function cargarMat(i) {
   document.getElementById('p3ico').textContent = i+1;
   document.getElementById('p3tit').textContent = m.materia;
   document.getElementById('p3sub').textContent = `Materia ${i+1} de ${tot}  ·  ${m.profesor}`;
-  const ul = i === tot-1;
-  document.getElementById('btnSig').textContent = ul
-    ? 'Enviar encuesta ✓'
-    : `Guardar y siguiente (${i+2}/${tot}) →`;
+  etiquetaBtnSig(i);
   updProg(i, tot); limpiar();
+}
+
+// Restaura texto Y estado habilitado del botón (antes quedaba bloqueado tras enviar)
+function etiquetaBtnSig(i) {
+  const b = document.getElementById('btnSig'), tot = mats.length;
+  b.disabled = false;
+  b.textContent = (i === tot-1) ? 'Enviar encuesta ✓' : `Enviar y siguiente (${i+2}/${tot}) →`;
 }
 
 function updProg(i, tot) {
@@ -750,6 +786,7 @@ function limpiar() {
   document.querySelectorAll('.field-error').forEach(e => e.classList.remove('visible'));
   document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
   document.getElementById('err-gen').style.display = 'none';
+  document.getElementById('err-envio').style.display = 'none';
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -775,23 +812,22 @@ function selC(label, name) {
   document.getElementById('er-'+name).classList.remove('visible');
 }
 
-function selCheck(label, name, val) {
-  const cb = label.querySelector('input[type="checkbox"]');
-  cb.checked = !cb.checked;
-  if (val === 'ok' && cb.checked) {
-    document.querySelectorAll(`input[name="${name}"]`).forEach(c => {
-      if (c.value !== 'ok') { c.checked=false; c.closest('.option-item').classList.remove('selected'); c.closest('.option-item').style.opacity='0.4'; }
-    });
-    label.classList.add('selected');
-  } else {
-    document.querySelectorAll(`input[name="${name}"]`).forEach(c =>
-      c.closest('.option-item').style.opacity='1');
-    const ok = document.querySelector(`input[name="${name}"][value="ok"]`);
-    if (ok && ok !== cb) { ok.checked=false; ok.closest('.option-item').classList.remove('selected'); }
-    label.classList.toggle('selected', cb.checked);
-  }
-  document.getElementById('fg-'+name).classList.remove('has-error');
-  document.getElementById('er-'+name).classList.remove('visible');
+// P14: el estado visual se deriva del estado real de los checkboxes (evento change).
+// "Sin problemas" es excluyente con el resto de las opciones.
+function manejarP14(e) {
+  const cb = e.target;
+  if (!cb || !cb.matches || !cb.matches('input[type="checkbox"][name="p14"]')) return;
+  const todos = Array.from(document.querySelectorAll('input[name="p14"]'));
+  const ok = todos.find(c => c.value === 'Sin problemas');
+  if (cb === ok && ok.checked)      todos.forEach(c => { if (c !== ok) c.checked = false; });
+  else if (cb !== ok && cb.checked) ok.checked = false;
+  todos.forEach(c => {
+    const it = c.closest('.option-item');
+    it.classList.toggle('selected', c.checked);
+    it.style.opacity = (ok.checked && c !== ok) ? '0.4' : '1';
+  });
+  document.getElementById('fg-p14').classList.remove('has-error');
+  document.getElementById('er-p14').classList.remove('visible');
 }
 
 function likert(p, v, opt) {
@@ -808,7 +844,7 @@ function likert(p, v, opt) {
 
 function manejarP1(r) {
   const c1=document.getElementById('p1a-c'), c2=document.getElementById('p1b-c');
-  if (r.value === 'no') { c1.classList.add('visible'); c2.classList.add('visible'); }
+  if (r.value.startsWith('No')) { c1.classList.add('visible'); c2.classList.add('visible'); }
   else {
     c1.classList.remove('visible'); c2.classList.remove('visible');
     document.querySelectorAll('input[name="p1a"],input[name="p1b"]').forEach(x => {
@@ -839,7 +875,7 @@ function validar() {
     {fg:'fg-p11',er:'er-p11',  check:()=>!!getRad('p11')},
     {fg:'fg-p12',er:'er-p12',  check:()=>!!getRad('p12')},
     {fg:'fg-p13',er:'er-p13',  check:()=>!!LK.p13},
-    {fg:'fg-p14',er:'er-p14',  check:()=>getChecks('p14').length>0},
+    {fg:'fg-p14',er:'er-p14',  check:()=>{ const c=getChecks('p14'); return c.length>0 && !(c.includes('Sin problemas') && c.length>1); }},
   ];
   campos.forEach(c => {
     if (!c.check()) {
@@ -849,7 +885,7 @@ function validar() {
       if (!primerError) primerError=document.getElementById(c.fg);
     }
   });
-  if (getRad('p1') === 'no') {
+  if ((getRad('p1') || '').startsWith('No')) {
     if (!getRad('p1a')) { ok=false; document.getElementById('er-p1a').classList.add('visible'); if(!primerError)primerError=document.getElementById('p1a-c'); }
     if (!getRad('p1b')) { ok=false; document.getElementById('er-p1b').classList.add('visible'); if(!primerError)primerError=document.getElementById('p1b-c'); }
   }
@@ -860,9 +896,11 @@ function validar() {
 // ============================================================
 // GUARDAR Y ENVIAR
 // ============================================================
-function guardarYSig() {
+async function guardarYSig() {
+  if (enviando) return;                          // evita doble clic
   if (!validar()) { document.getElementById('err-gen').style.display='flex'; return; }
   document.getElementById('err-gen').style.display='none';
+  document.getElementById('err-envio').style.display='none';
 
   const m = mats[idx];
   const resp = {
@@ -901,53 +939,57 @@ function guardarYSig() {
     p14_infraestr:    getChecks('p14').join('|'),
     p15_comentarios:  document.getElementById('p15').value.trim()
   };
+  respPend = resp;
 
-  respAcum.push(resp);
-  matYaResp.add(m.idCurso);
-
-  if (idx < mats.length-1) {
-    mostrarToast(`✓ ${m.materia} guardada`);
-    idx++;
-    setTimeout(() => cargarMat(idx), 400);
-  } else {
-    enviar();
-  }
-}
-
-async function enviar() {
+  // Cada materia se envía en cuanto se responde: "Atrás" ya no pierde nada
+  // y un fallo de red no duplica las materias que sí se enviaron.
+  enviando = true;
   const btn = document.getElementById('btnSig');
   btn.disabled = true;
   btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;"></span> Enviando...';
+  mostrarLoading('Enviando evaluación...');
+  const ok = await enviarUna(resp);
+  ocultarLoading();
+  enviando = false;
 
-  mostrarLoading('Enviando respuestas...');
-  let enviado = false;
-
-  try {
-    for (const r of respAcum) {
-      // Enviar como FormData para evitar problemas CORS con no-cors
-      const formData = new FormData();
-      formData.append('data', JSON.stringify(r));
-      formData.append('key', API_KEY);
-      await fetch(GS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData
-      });
-    }
-    enviado = true;
-  } catch(e) {
-    console.warn('Error enviando:', e);
-    enviado = false;
+  if (!ok) {
+    document.getElementById('err-envio').style.display = 'flex';
+    etiquetaBtnSig(idx);                         // el botón vuelve a quedar activo para reintentar
+    return;
   }
 
-  ocultarLoading();
-  confirmar(enviado);
+  respAcum.push(resp);
+  matYaResp.add(keyMat(m));
+  respPend = null;
+
+  if (idx < mats.length-1) {
+    mostrarToast(`✓ ${m.materia} enviada`);
+    idx++;
+    setTimeout(() => cargarMat(idx), 400);
+  } else {
+    confirmar(true);
+  }
+}
+
+// Con mode:'no-cors' la respuesta es opaca: solo se detectan fallos de red,
+// no errores del Apps Script (401, cuota, excepciones).
+async function enviarUna(r) {
+  try {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(r));
+    formData.append('key', API_KEY);
+    await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: formData });
+    return true;
+  } catch(e) {
+    console.warn('Error enviando:', e);
+    return false;
+  }
 }
 
 function confirmar(ok) {
   document.getElementById('progressBar').style.width = '100%';
   document.getElementById('confSub').textContent = ok
-    ? 'Tus respuestas han sido registradas correctamente.'
+    ? 'Tus respuestas fueron enviadas.'
     : 'Evaluación completada. Descarga el archivo de respuestas.';
   const noms = respAcum.map(r => `• ${r.materia}`).join('<br>');
   document.getElementById('confResumen').innerHTML = `
@@ -962,8 +1004,9 @@ function confirmar(ok) {
   ir('p4', 100);
 }
 
-function descargar() {
-  const b = new Blob([JSON.stringify(respAcum,null,2)], {type:'application/json'});
+function descargar(lista) {
+  lista = lista || respAcum;
+  const b = new Blob([JSON.stringify(lista,null,2)], {type:'application/json'});
   const u = URL.createObjectURL(b);
   const a = document.createElement('a');
   a.href=u; a.download=`encuesta_${alumno.idAlumno}_s${semana}_${Date.now()}.json`;
@@ -997,7 +1040,10 @@ function ir(id, pct) {
 }
 
 function nuevaEnc() {
+  busqSeq++; enviando=false; respPend=null;
   alumno=null; semana=null; semInfo=null; mats=[]; idx=0; respAcum=[];
+  // matYaResp se conserva a propósito: sus llaves son alumno+semana+curso,
+  // así un mismo alumno no repite una materia y otro alumno no la ve bloqueada.
   document.getElementById('inputId').value='';
   document.getElementById('alumnoInfo').style.display='none';
   document.getElementById('alumnoError').style.display='none';
